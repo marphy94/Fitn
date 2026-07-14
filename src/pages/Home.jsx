@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { Settings, Play, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGear } from '@fortawesome/free-solid-svg-icons'
 import Screen from '../components/Screen'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -32,13 +34,13 @@ export default function Home() {
   return (
     <>
       <header className="topbar">
-        <h1 className="topbar__title">Hallo Maria</h1>
+        <h1 className="topbar__title">Hallo Maria,</h1>
         <button
           className="icon-btn"
           aria-label="Settings"
           onClick={() => haptics.light()}
         >
-          <Settings size={22} strokeWidth={2} />
+          <FontAwesomeIcon icon={faGear} className="icon-btn__fa" />
         </button>
       </header>
 
@@ -46,9 +48,7 @@ export default function Home() {
         {/* Next workout */}
         <Card className="next-workout">
           <div className="next-workout__meta">
-            <span className="section-label" style={{ margin: 0 }}>
-              Next Workout
-            </span>
+            <span className="info-label">Next Workout</span>
             <p className="next-workout__name">{nextWorkout.name}</p>
             <p className="next-workout__sub text-secondary">
               {nextWorkout.exercises} exercises
@@ -57,7 +57,6 @@ export default function Home() {
           <Button
             variant="primary"
             size="pill"
-            icon={Play}
             haptic="medium"
             onClick={() => navigate(nextPlan ? '/workout' : '/plans')}
           >
@@ -73,9 +72,7 @@ export default function Home() {
         {/* Last workout header */}
         <div className="last-workout-head">
           <div>
-            <span className="section-label" style={{ margin: 0 }}>
-              Last Workout • {lastWorkout.date}
-            </span>
+            <span className="info-label">Last Workout • {lastWorkout.date}</span>
             <p className="last-workout-head__name">{lastWorkout.name}</p>
           </div>
           <Button

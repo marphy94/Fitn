@@ -57,12 +57,6 @@
   color: rgba(166, 77, 121, 0.75);
 }
 
-.cal__cell--today .cal__num {
-  color: #fff;
-  background: var(--color-accent-soft);
-  border: 1px solid var(--color-accent-border);
-}
-
 .cal__dot {
   width: 7px;
   height: 7px;

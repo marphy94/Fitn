@@ -13,7 +13,6 @@ const MONTHS = [
 export default function MonthCalendar({
   year = 2026,
   month = 6, // 0-indexed
-  today = 14,
   workoutDays = [2, 3, 14, 15, 16],
 }) {
   const first = new Date(year, month, 1)
@@ -46,16 +45,11 @@ export default function MonthCalendar({
           if (day === null) return <span key={`e${i}`} className="cal__cell" />
           const col = i % 7
           const isWeekend = col >= 5
-          const isToday = day === today
           const isWorkout = workoutDays.includes(day)
           return (
             <span
               key={day}
-              className={
-                'cal__cell' +
-                (isWeekend ? ' cal__cell--we' : '') +
-                (isToday ? ' cal__cell--today' : '')
-              }
+              className={'cal__cell' + (isWeekend ? ' cal__cell--we' : '')}
             >
               <span className="cal__num">{day}</span>
               <span
