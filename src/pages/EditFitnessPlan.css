@@ -1,0 +1,99 @@
+.plan-editor {
+  position: absolute;
+  inset: 0;
+}
+
+.plan-editor__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.plan-editor__scroll {
+  padding-top: calc(var(--safe-top) + 74px);
+  padding-bottom: calc(var(--safe-bottom) + 96px);
+}
+
+.plan-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  list-style: none;
+}
+.plan-item__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-section);
+}
+.plan-item__resticon {
+  color: var(--text-secondary);
+}
+.plan-item__sub {
+  font-size: 12px;
+  margin-top: 3px;
+}
+.plan-item__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.grip {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 34px;
+  color: var(--text-dulled);
+  cursor: grab;
+  touch-action: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.grip:hover {
+  color: var(--text-secondary);
+}
+.grip:active {
+  cursor: grabbing;
+}
+
+/* Bottom add bar */
+.plan-add {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-3) var(--space-4) calc(var(--safe-bottom) + 16px);
+  background: linear-gradient(
+    to top,
+    var(--color-bg) 60%,
+    rgba(15, 15, 27, 0)
+  );
+}
+.plan-add__field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 50px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-border);
+}
+.plan-add__input {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.plan-add__input::placeholder {
+  color: var(--text-dulled);
+}

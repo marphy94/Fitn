@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Design Tokens — Fitn
+   A dark, minimalist fitness aesthetic inspired by Apple Fitness, Linear,
+   Notion Calendar and Gentler Streaks.
+   ========================================================================== */
+
+:root {
+  /* --- Color: Surfaces --- */
+  --color-bg: #0f0f1b;
+  --color-bg-elevated: #14121d;
+  --color-card: #17151f;
+  --color-card-hover: #1c1a26;
+  --color-field: #232130;
+
+  /* --- Color: Borders / Hairlines --- */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-border-faint: rgba(255, 255, 255, 0.04);
+
+  /* --- Color: Accents --- */
+  --color-accent: #a64d79;
+  --color-accent-soft: rgba(166, 77, 121, 0.16);
+  --color-accent-border: rgba(166, 77, 121, 0.45);
+  --color-positive: #a6c156;
+  --color-positive-soft: rgba(166, 193, 86, 0.14);
+  --color-negative: #ae1c4d;
+  --color-negative-soft: rgba(174, 28, 77, 0.16);
+
+  /* --- Color: Text --- */
+  --text-primary: #ffffff;
+  --text-secondary: #a6a6b3;
+  --text-dulled: #72727f;
+
+  /* --- Typography --- */
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Passion One', var(--font-body);
+
+  --fs-large-title: 24px;
+  --fs-section: 18px;
+  --fs-body: 14px;
+  --fs-label: 10px;
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 700; /* Lato jumps 400 -> 700; used as semibold weight */
+  --fw-bold: 700;
+  --fw-black: 900;
+
+  /* --- Radius --- */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 15px;
+  --radius-pill: 999px;
+
+  /* --- Spacing scale --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* --- Elevation (subtle, border-first) --- */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.02) inset,
+    0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.5);
+
+  /* --- Glass --- */
+  --glass-bg: rgba(23, 21, 31, 0.62);
+  --glass-blur: saturate(150%) blur(20px);
+
+  /* --- Motion --- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+
+  /* --- Layout --- */
+  --tabbar-height: 76px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

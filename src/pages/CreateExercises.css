@@ -1,0 +1,40 @@
+.exercise-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.exercise-row__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-section);
+}
+.exercise-row__groups {
+  font-size: 12px;
+  margin-top: 3px;
+}
+.exercise-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.del-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  color: #e0567f;
+  border: 1px solid rgba(174, 28, 77, 0.5);
+  transition: background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.del-btn:hover {
+  background: var(--color-negative-soft);
+}
+.del-btn:active {
+  transform: scale(0.9);
+}

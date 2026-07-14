@@ -1,0 +1,21 @@
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  padding-top: calc(var(--safe-top) + 54px);
+  padding-bottom: calc(var(--safe-bottom) + 28px);
+}
+
+.screen--padded {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.screen--tabbar {
+  padding-bottom: calc(
+    var(--safe-bottom) + var(--tabbar-height) + var(--space-4)
+  );
+}

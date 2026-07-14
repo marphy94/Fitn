@@ -1,0 +1,234 @@
+.workout {
+  position: absolute;
+  inset: 0;
+}
+
+/* Progress header */
+.workout__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: calc(var(--safe-top) + 46px) var(--space-4) 12px;
+  background: linear-gradient(to bottom, var(--color-bg) 60%, rgba(15, 15, 27, 0));
+}
+.workout__progress {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+.seg {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.seg--full {
+  background: var(--color-accent);
+}
+.seg--current {
+  background: linear-gradient(
+    to right,
+    var(--color-accent) 45%,
+    rgba(255, 255, 255, 0.1) 45%
+  );
+}
+.workout__topmeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.workout__count {
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+}
+
+.workout__scroll {
+  padding-top: calc(var(--safe-top) + 78px);
+  padding-bottom: calc(var(--safe-bottom) + 96px);
+}
+
+/* Heading */
+.workout__heading {
+  margin-bottom: var(--space-4);
+}
+.workout__set {
+  font-weight: var(--fw-bold);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.workout__best {
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* Set row */
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+}
+.set-row--active {
+  background: linear-gradient(
+    100deg,
+    rgba(166, 193, 86, 0.16),
+    rgba(166, 193, 86, 0.05)
+  );
+  border-color: rgba(166, 193, 86, 0.35);
+}
+.set-row__meta {
+  display: flex;
+  gap: var(--space-4);
+  flex: 1;
+  min-width: 0;
+}
+.set-row__index,
+.set-row__last {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.set-row__k {
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
+.set-row__v {
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.set-row__last .set-row__v {
+  color: var(--text-secondary);
+}
+
+.set-row__inputs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.mini-input {
+  width: 40px;
+  height: 38px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  background: var(--color-field);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+.mini-input:focus {
+  border-color: var(--color-accent-border);
+}
+.set-row__unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.set-row__x {
+  font-size: 13px;
+  color: var(--text-dulled);
+  margin: 0 1px;
+}
+
+/* Rest row */
+.rest-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+}
+.rest-row__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-align: left;
+  flex: 1;
+}
+.rest-row__k {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
+.rest-row__v {
+  font-size: 14px;
+  font-weight: var(--fw-medium);
+}
+
+/* Check toggle */
+.check-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-field);
+  border: 1px solid var(--color-border);
+  color: var(--text-dulled);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.check-toggle:active {
+  transform: scale(0.9);
+}
+.check-toggle.is-done {
+  color: #12140a;
+  border-color: transparent;
+}
+.check-toggle--positive.is-done {
+  background: var(--color-positive);
+  box-shadow: 0 4px 14px rgba(166, 193, 86, 0.4);
+}
+.check-toggle.is-done:not(.check-toggle--positive) {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(166, 77, 121, 0.4);
+}
+
+.workout__addset {
+  margin: var(--space-4) 0 var(--space-5);
+}
+
+/* Up next */
+.upnext {
+  padding: var(--space-4);
+}
+.upnext__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-section);
+}
+.upnext__meta {
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  margin-top: 4px;
+}
+.upnext__best {
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* End workout */
+.workout__end {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-3) var(--space-4) calc(var(--safe-bottom) + 18px);
+  background: linear-gradient(to top, var(--color-bg) 62%, rgba(15, 15, 27, 0));
+}

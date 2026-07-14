@@ -1,0 +1,165 @@
+@import './tokens.css';
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-normal);
+  color: var(--text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+}
+
+/* Custom scrollbars — kept minimal, iOS-like */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ==========================================================================
+   Typography helpers
+   ========================================================================== */
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.2px;
+}
+
+.large-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-large-title);
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-section);
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.body-text {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-normal);
+  color: var(--text-primary);
+}
+
+.label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-dulled {
+  color: var(--text-dulled);
+}
+.text-positive {
+  color: var(--color-positive);
+}
+.text-negative {
+  color: var(--color-negative);
+}
+.text-accent {
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   Utility
+   ========================================================================== */
+.hairline {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+.between {
+  justify-content: space-between;
+}
+.gap-1 {
+  gap: var(--space-1);
+}
+.gap-2 {
+  gap: var(--space-2);
+}
+.gap-3 {
+  gap: var(--space-3);
+}
+.gap-4 {
+  gap: var(--space-4);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
