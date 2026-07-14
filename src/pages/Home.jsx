@@ -4,7 +4,8 @@ import Screen from '../components/Screen'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import MonthCalendar from '../components/MonthCalendar'
-import { nextWorkout, lastWorkout } from '../data/mock'
+import { lastWorkout } from '../data/mock'
+import { usePlans } from '../store/store'
 import haptics from '../lib/haptics'
 import './Home.css'
 
@@ -19,6 +20,14 @@ function DeltaBadge({ value }) {
 
 export default function Home() {
   const navigate = useNavigate()
+  const plans = usePlans()
+  const nextPlan = plans[0]
+  const nextWorkout = {
+    name: nextPlan?.name ?? 'No plan yet',
+    exercises: nextPlan
+      ? nextPlan.items.filter((i) => i.type === 'exercise').length
+      : 0,
+  }
 
   return (
     <>
@@ -50,7 +59,7 @@ export default function Home() {
             size="pill"
             icon={Play}
             haptic="medium"
-            onClick={() => navigate('/workout')}
+            onClick={() => navigate(nextPlan ? '/workout' : '/plans')}
           >
             Start
           </Button>

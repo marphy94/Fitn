@@ -1,14 +1,30 @@
 import { useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Play, ChevronRight, ListChecks } from 'lucide-react'
+import { Plus, Pencil, Play, ChevronRight, ListChecks, Trash2 } from 'lucide-react'
 import Screen from '../components/Screen'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
-import { plans } from '../data/mock'
+import { useStore, usePlans } from '../store/store'
 import haptics from '../lib/haptics'
 import './FitnessPlans.css'
 
 export default function FitnessPlans() {
   const navigate = useNavigate()
+  const plans = usePlans()
+  const { dispatch } = useStore()
+
+  const addPlan = () => {
+    haptics.medium()
+    dispatch({ type: 'plan/add', payload: { name: 'New Plan' } })
+  }
+
+  const removePlan = (id, e) => {
+    e.stopPropagation()
+    haptics.warning()
+    dispatch({ type: 'plan/delete', payload: id })
+  }
+
+  const countExercises = (plan) =>
+    plan.items.filter((i) => i.type === 'exercise').length
 
   return (
     <>
@@ -19,7 +35,7 @@ export default function FitnessPlans() {
           size="pill"
           icon={Plus}
           haptic="medium"
-          onClick={() => navigate('/plans/leg-day/edit')}
+          onClick={addPlan}
         >
           ADD
         </Button>
@@ -29,9 +45,9 @@ export default function FitnessPlans() {
         <span className="section-label">Your plans</span>
         <div className="stack">
           {plans.map((plan) => (
-            <Card key={plan.id} className="plan-card" interactive>
+            <Card key={plan.id} className="plan-card">
               <div
-                className="plan-card__body"
+                className="plan-card__body plan-card__body--tap"
                 onClick={() => {
                   haptics.light()
                   navigate(`/plans/${plan.id}/edit`)
@@ -40,17 +56,20 @@ export default function FitnessPlans() {
                 <div className="plan-card__info">
                   <p className="plan-card__name">{plan.name}</p>
                   <p className="plan-card__meta text-secondary">
-                    {plan.items.filter((i) => i.type === 'exercise').length}{' '}
-                    exercises
+                    {countExercises(plan)} exercises
                   </p>
                 </div>
-                <ChevronRight
-                  size={20}
-                  className="text-dulled"
-                  strokeWidth={2}
-                />
+                <ChevronRight size={20} className="text-dulled" strokeWidth={2} />
               </div>
               <div className="plan-card__foot">
+                <button
+                  className="del-btn"
+                  aria-label={`Delete ${plan.name}`}
+                  onClick={(e) => removePlan(plan.id, e)}
+                >
+                  <Trash2 size={16} strokeWidth={2} />
+                </button>
+                <div className="plan-card__foot-spacer" />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -65,6 +84,7 @@ export default function FitnessPlans() {
                   icon={Play}
                   haptic="medium"
                   onClick={() => navigate('/workout')}
+                  disabled={countExercises(plan) === 0}
                 >
                   Start
                 </Button>

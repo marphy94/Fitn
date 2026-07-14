@@ -4,19 +4,20 @@ import { ArrowLeft, Save } from 'lucide-react'
 import Screen from '../components/Screen'
 import Button from '../components/ui/Button'
 import Chip from '../components/ui/Chip'
-import { exercises, MUSCLE_GROUPS } from '../data/mock'
+import { MUSCLE_GROUPS } from '../data/mock'
+import { useStore, useExercise, uid } from '../store/store'
 import haptics from '../lib/haptics'
 import './EditExercise.css'
 
 export default function EditExercise() {
   const navigate = useNavigate()
   const { exerciseId } = useParams()
-  const editing = exercises.find((e) => e.id === exerciseId)
+  const isNew = exerciseId === 'new'
+  const editing = useExercise(exerciseId)
+  const { dispatch } = useStore()
 
-  const [name, setName] = useState(editing ? 'Sumo Squats' : '')
-  const [selected, setSelected] = useState(
-    new Set(editing?.groups ?? [])
-  )
+  const [name, setName] = useState(editing?.name ?? '')
+  const [selected, setSelected] = useState(new Set(editing?.groups ?? []))
 
   const toggle = (group) => {
     setSelected((prev) => {
@@ -26,7 +27,21 @@ export default function EditExercise() {
     })
   }
 
+  const canSave = name.trim().length > 0
+
   const save = () => {
+    if (!canSave) {
+      haptics.warning()
+      return
+    }
+    dispatch({
+      type: 'exercise/save',
+      payload: {
+        id: isNew ? uid() : exerciseId,
+        name: name.trim(),
+        groups: [...selected],
+      },
+    })
     haptics.success()
     navigate(-1)
   }
@@ -42,14 +57,20 @@ export default function EditExercise() {
         >
           Back
         </Button>
-        <Button variant="primary" size="pill" icon={Save} onClick={save}>
+        <Button
+          variant="primary"
+          size="pill"
+          icon={Save}
+          onClick={save}
+          style={canSave ? undefined : { opacity: 0.5 }}
+        >
           Save
         </Button>
       </header>
 
       <Screen hasTabBar>
         <h1 className="large-title editor-title">
-          {editing ? 'Edit Exercise' : 'New Exercise'}
+          {isNew ? 'New Exercise' : 'Edit Exercise'}
         </h1>
 
         <div className="field">
@@ -60,6 +81,7 @@ export default function EditExercise() {
             id="ex-name"
             className="input"
             value={name}
+            autoFocus={isNew}
             placeholder="e.g. Bulgarian Split Squat"
             onChange={(e) => setName(e.target.value)}
           />

@@ -3,10 +3,26 @@
   inset: 0;
 }
 
+.plan-editor__topbar {
+  align-items: center;
+}
 .plan-editor__title {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+}
+.plan-editor__rename {
+  flex: 1;
+  height: 40px;
+  padding: 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-large-title);
+  color: var(--text-primary);
+  background: var(--color-field);
+  border: 1px solid var(--color-accent-border);
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-2);
 }
 
 .plan-editor__scroll {
@@ -96,4 +112,69 @@
 }
 .plan-add__input::placeholder {
   color: var(--text-dulled);
+}
+.plan-add__toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+}
+
+/* Exercise picker popover */
+.picker {
+  margin-bottom: var(--space-2);
+  max-height: 320px;
+  overflow-y: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-float);
+}
+.picker__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-faint);
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.picker__row:last-child {
+  border-bottom: none;
+}
+.picker__row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.picker__row:active {
+  background: var(--color-accent-soft);
+}
+.picker__row--rest {
+  color: var(--text-secondary);
+}
+.picker__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.picker__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+}
+.picker__sub {
+  font-size: 12px;
+}
+.picker__empty {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 13px;
 }

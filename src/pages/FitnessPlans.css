@@ -17,13 +17,23 @@
   font-size: 13px;
   margin-top: 3px;
 }
+.plan-card__body--tap {
+  cursor: pointer;
+}
 .plan-card__foot {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3) var(--space-3);
   border-top: 1px solid var(--color-border-faint);
+}
+.plan-card__foot-spacer {
+  flex: 1;
+}
+.plan-card .del-btn {
+  width: 32px;
+  height: 32px;
+  margin-left: var(--space-1);
 }
 
 .lib-icon {
