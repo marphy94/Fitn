@@ -57,7 +57,7 @@ function reducer(state, action) {
     case 'plan/add': {
       const plan = {
         id: uid(),
-        name: action.payload?.name || 'New Plan',
+        name: action.payload?.name || 'New Workout',
         items: [],
       }
       return { ...state, plans: [...state.plans, plan] }

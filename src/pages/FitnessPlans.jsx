@@ -14,7 +14,7 @@ export default function FitnessPlans() {
 
   const addPlan = () => {
     haptics.medium()
-    dispatch({ type: 'plan/add', payload: { name: 'New Plan' } })
+    dispatch({ type: 'plan/add', payload: { name: 'New Workout' } })
   }
 
   const removePlan = (id, e) => {
@@ -29,7 +29,7 @@ export default function FitnessPlans() {
   return (
     <>
       <header className="topbar">
-        <h1 className="topbar__title">Fitness Plans</h1>
+        <h1 className="topbar__title">Workouts</h1>
         <Button
           variant="primary"
           size="pill"
@@ -42,7 +42,7 @@ export default function FitnessPlans() {
       </header>
 
       <Screen hasTabBar>
-        <span className="section-label">Your plans</span>
+        <span className="section-label">Your workouts</span>
         <div className="stack">
           {plans.map((plan) => (
             <Card key={plan.id} className="plan-card">

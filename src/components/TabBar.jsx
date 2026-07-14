@@ -5,7 +5,7 @@ import './TabBar.css'
 
 const tabs = [
   { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/workout', label: 'Workout', icon: Dumbbell },
+  { to: '/plans', label: 'Workout', icon: Dumbbell },
   { to: '/statistics', label: 'Statics', icon: BarChart3 },
 ]
 

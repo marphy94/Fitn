@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, Dumbbell, Flame } from 'lucide-react'
+import { TrendingUp, TrendingDown, Dumbbell } from 'lucide-react'
 import Screen from '../components/Screen'
 import Card from '../components/ui/Card'
 import haptics from '../lib/haptics'
@@ -54,11 +54,11 @@ export default function Statistics() {
             <span className="stat-tile__label text-secondary">Workouts</span>
           </Card>
           <Card className="stat-tile">
-            <div className="stat-tile__icon stat-tile__icon--pos">
-              <Flame size={16} strokeWidth={2.25} />
+            <div className="stat-tile__icon">
+              <TrendingUp size={16} strokeWidth={2.25} />
             </div>
-            <span className="stat-tile__value">4</span>
-            <span className="stat-tile__label text-secondary">Week streak</span>
+            <span className="stat-tile__value">18,240 kg</span>
+            <span className="stat-tile__label text-secondary">Total volume</span>
           </Card>
         </div>
 
