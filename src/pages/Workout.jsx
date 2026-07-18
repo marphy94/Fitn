@@ -28,6 +28,9 @@ function CheckToggle({ done, onToggle }) {
       className={'check-toggle' + (done ? ' is-done check-toggle--positive' : '')}
       aria-pressed={done}
       aria-label={done ? 'Mark set incomplete' : 'Mark set complete'}
+      // Keep the focused input from blurring first, so a tap here doesn't race
+      // the automatic check-on-blur.
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onToggle}
     >
       <Check size={16} strokeWidth={3} />
@@ -78,6 +81,15 @@ function SetRow({ setNo, block, active, done, onChange, onToggle }) {
     onToggle()
   }
 
+  // Once both fields are filled and the user leaves the field, check the set
+  // off automatically.
+  const autoCheck = () => {
+    if (!done && !kgEmpty && !repsEmpty) {
+      setError(false)
+      onToggle()
+    }
+  }
+
   return (
     <>
       <div
@@ -107,6 +119,7 @@ function SetRow({ setNo, block, active, done, onChange, onToggle }) {
               onChange({ kg: e.target.value })
               clearError()
             }}
+            onBlur={autoCheck}
             aria-label="Weight in kilograms"
           />
           <span className="set-row__unit">kg</span>
@@ -119,6 +132,7 @@ function SetRow({ setNo, block, active, done, onChange, onToggle }) {
               onChange({ reps: e.target.value })
               clearError()
             }}
+            onBlur={autoCheck}
             aria-label="Repetitions"
           />
           <span className="set-row__unit">reps</span>
