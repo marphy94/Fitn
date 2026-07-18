@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Pause, Play, RotateCcw, Plus } from 'lucide-react'
+import { X, Pause, Play, RotateCcw, Plus, Minus } from 'lucide-react'
 import Button from '../components/ui/Button'
 import haptics from '../lib/haptics'
 import './RestTimer.css'
@@ -42,6 +42,11 @@ export default function RestTimer() {
     haptics.light()
     setTotal((t) => t + 30)
     setRemaining((r) => r + 30)
+  }
+  const subTime = () => {
+    haptics.light()
+    setTotal((t) => Math.max(30, t - 30))
+    setRemaining((r) => Math.max(0, r - 30))
   }
   const reset = () => {
     haptics.medium()
@@ -102,6 +107,14 @@ export default function RestTimer() {
         <div className="rest__controls">
           <button className="rest__ctrl" aria-label="Restart" onClick={reset}>
             <RotateCcw size={22} strokeWidth={2} />
+          </button>
+          <button
+            className="rest__ctrl"
+            aria-label="Subtract 30 seconds"
+            onClick={subTime}
+          >
+            <Minus size={22} strokeWidth={2} />
+            <span className="rest__ctrl-badge">30s</span>
           </button>
           <button
             className="rest__ctrl rest__ctrl--primary"

@@ -61,7 +61,7 @@
 .rest__controls {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 16px;
 }
 .rest__ctrl {
   position: relative;
