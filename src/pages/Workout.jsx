@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings, Check, Plus, Timer, ChevronDown, X, Clock } from 'lucide-react'
+import {
+  Settings,
+  Check,
+  Plus,
+  Timer,
+  ChevronDown,
+  X,
+  Clock,
+  AlertCircle,
+} from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { activeSession } from '../data/mock'
@@ -26,42 +35,80 @@ function CheckToggle({ done, onToggle }) {
 function SetRow({ setNo, block, active, done, onToggle }) {
   const [kg, setKg] = useState(block.kg ? String(block.kg) : '')
   const [reps, setReps] = useState(block.reps ? String(block.reps) : '')
+  const [error, setError] = useState(false)
+
+  const kgEmpty = kg.trim() === ''
+  const repsEmpty = reps.trim() === ''
+
+  const clearError = () => error && setError(false)
+
+  const handleToggle = () => {
+    // A set may only be checked off once its fields are filled in.
+    if (!done && (kgEmpty || repsEmpty)) {
+      setError(true)
+      haptics.error()
+      return
+    }
+    setError(false)
+    onToggle()
+  }
 
   return (
-    <div className={'set-row' + (active ? ' set-row--active' : '')}>
-      <div className="set-row__meta">
-        <div className="set-row__index">
-          <span className="set-row__k">Set</span>
-          <span className="set-row__v">{setNo}</span>
+    <>
+      <div
+        className={
+          'set-row' +
+          (active ? ' set-row--active' : '') +
+          (error ? ' set-row--error' : '')
+        }
+      >
+        <div className="set-row__meta">
+          <div className="set-row__index">
+            <span className="set-row__k">Set</span>
+            <span className="set-row__v">{setNo}</span>
+          </div>
+          <div className="set-row__last">
+            <span className="set-row__k">Last</span>
+            <span className="set-row__v">{block.last}</span>
+          </div>
         </div>
-        <div className="set-row__last">
-          <span className="set-row__k">Last</span>
-          <span className="set-row__v">{block.last}</span>
+
+        <div className="set-row__inputs">
+          <input
+            className={'mini-input' + (error && kgEmpty ? ' mini-input--error' : '')}
+            inputMode="numeric"
+            value={kg}
+            onChange={(e) => {
+              setKg(e.target.value)
+              clearError()
+            }}
+            aria-label="Weight in kilograms"
+          />
+          <span className="set-row__unit">kg</span>
+          <span className="set-row__x">×</span>
+          <input
+            className={'mini-input' + (error && repsEmpty ? ' mini-input--error' : '')}
+            inputMode="numeric"
+            value={reps}
+            onChange={(e) => {
+              setReps(e.target.value)
+              clearError()
+            }}
+            aria-label="Repetitions"
+          />
+          <span className="set-row__unit">reps</span>
         </div>
+
+        <CheckToggle done={done} onToggle={handleToggle} />
       </div>
 
-      <div className="set-row__inputs">
-        <input
-          className="mini-input"
-          inputMode="numeric"
-          value={kg}
-          onChange={(e) => setKg(e.target.value)}
-          aria-label="Weight in kilograms"
-        />
-        <span className="set-row__unit">kg</span>
-        <span className="set-row__x">×</span>
-        <input
-          className="mini-input"
-          inputMode="numeric"
-          value={reps}
-          onChange={(e) => setReps(e.target.value)}
-          aria-label="Repetitions"
-        />
-        <span className="set-row__unit">reps</span>
-      </div>
-
-      <CheckToggle done={done} onToggle={onToggle} />
-    </div>
+      {error && (
+        <p className="set-error" role="alert">
+          <AlertCircle size={13} strokeWidth={2.5} />
+          Enter weight and reps to complete this set.
+        </p>
+      )}
+    </>
   )
 }
 
@@ -140,18 +187,22 @@ export default function Workout() {
 
   const toggleSet = (exIndex, setIndex) => {
     const wasChecked = checked[exIndex][setIndex]
-    setChecked((prev) =>
-      prev.map((arr, e) =>
-        e === exIndex
-          ? arr.map((v, s) => (s === setIndex ? !v : v))
-          : arr
-      )
-    )
+    const newRow = checked[exIndex].map((v, s) => (s === setIndex ? !v : v))
+    setChecked((prev) => prev.map((arr, e) => (e === exIndex ? newRow : arr)))
+
     if (!wasChecked) {
-      // Just checked a set off → automatically run the following rest.
       haptics.success()
       const ex = exercises[exIndex]
-      if (setIndex < ex.sets.length - 1) {
+      const nowComplete = newRow.every(Boolean)
+      if (nowComplete) {
+        // Exercise finished → collapse it and open the next one below.
+        clearInterval(restTimer.current)
+        setRest(null)
+        setTimeout(() => {
+          setOpenIndex(exIndex + 1 < exercises.length ? exIndex + 1 : -1)
+        }, 550)
+      } else if (setIndex < ex.sets.length - 1) {
+        // Otherwise automatically run the rest after this set.
         startRest(exIndex, setIndex, ex.rest)
       }
     } else {

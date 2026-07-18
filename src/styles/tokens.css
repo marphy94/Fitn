@@ -25,6 +25,8 @@
   --color-positive-soft: rgba(166, 193, 86, 0.14);
   --color-negative: #ae1c4d;
   --color-negative-soft: rgba(174, 28, 77, 0.16);
+  --color-error: #d40b38;
+  --color-error-soft: rgba(212, 11, 56, 0.12);
 
   /* --- Color: Text --- */
   --text-primary: #ffffff;

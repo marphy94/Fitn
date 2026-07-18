@@ -145,6 +145,20 @@
   );
   border-color: rgba(166, 193, 86, 0.35);
 }
+.set-row--error {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+}
+
+.set-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 2px var(--space-3);
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  color: var(--color-error);
+}
 .set-row__meta {
   display: flex;
   gap: var(--space-3);
@@ -202,6 +216,14 @@
 }
 .mini-input:focus {
   border-color: var(--color-accent-border);
+}
+.mini-input--error {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+  color: var(--color-error);
+}
+.mini-input--error:focus {
+  border-color: var(--color-error);
 }
 .set-row__unit {
   font-size: 12px;
