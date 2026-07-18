@@ -32,11 +32,11 @@ function CheckToggle({ done, onToggle }) {
   )
 }
 
-function SetRow({ setNo, block, active, done, onToggle }) {
-  const [kg, setKg] = useState(block.kg ? String(block.kg) : '')
-  const [reps, setReps] = useState(block.reps ? String(block.reps) : '')
+function SetRow({ setNo, block, active, done, value, onChange, onToggle }) {
   const [error, setError] = useState(false)
 
+  const kg = value.kg
+  const reps = value.reps
   const kgEmpty = kg.trim() === ''
   const repsEmpty = reps.trim() === ''
 
@@ -79,7 +79,7 @@ function SetRow({ setNo, block, active, done, onToggle }) {
             inputMode="numeric"
             value={kg}
             onChange={(e) => {
-              setKg(e.target.value)
+              onChange({ ...value, kg: e.target.value })
               clearError()
             }}
             aria-label="Weight in kilograms"
@@ -91,7 +91,7 @@ function SetRow({ setNo, block, active, done, onToggle }) {
             inputMode="numeric"
             value={reps}
             onChange={(e) => {
-              setReps(e.target.value)
+              onChange({ ...value, reps: e.target.value })
               clearError()
             }}
             aria-label="Repetitions"
@@ -146,6 +146,22 @@ export default function Workout() {
   const [checked, setChecked] = useState(() =>
     exercises.map((ex) => ex.sets.map(() => false))
   )
+  // Set entries (kg / reps) live here so they survive collapsing an exercise.
+  const [entries, setEntries] = useState(() =>
+    exercises.map((ex) =>
+      ex.sets.map((s) => ({
+        kg: s.kg ? String(s.kg) : '',
+        reps: s.reps ? String(s.reps) : '',
+      }))
+    )
+  )
+
+  const setEntry = (exIndex, setIndex, val) =>
+    setEntries((prev) =>
+      prev.map((arr, e) =>
+        e === exIndex ? arr.map((v, s) => (s === setIndex ? val : v)) : arr
+      )
+    )
   // Currently running rest: { ex, set, remaining } | null
   const [rest, setRest] = useState(null)
   const restTimer = useRef(null)
@@ -300,6 +316,8 @@ export default function Workout() {
                           block={block}
                           active={setIndex === activeSetIndex}
                           done={checked[exIndex][setIndex]}
+                          value={entries[exIndex][setIndex]}
+                          onChange={(val) => setEntry(exIndex, setIndex, val)}
                           onToggle={() => toggleSet(exIndex, setIndex)}
                         />
                         {setIndex < ex.sets.length - 1 && (
