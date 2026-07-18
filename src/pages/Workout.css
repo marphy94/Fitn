@@ -126,6 +126,38 @@
   padding: 0 var(--space-3) var(--space-4);
 }
 
+/* A set together with its paired rest timer */
+.set-unit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Swipe-to-delete */
+.swipe {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.swipe__action {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+  background: var(--color-error-soft);
+  color: var(--color-error);
+}
+.swipe__content {
+  position: relative;
+  cursor: grab;
+}
+.swipe__content:active {
+  cursor: grabbing;
+}
+
 /* ---- Set row ---- */
 .set-row {
   display: flex;
@@ -282,10 +314,29 @@
   color: var(--color-accent);
   font-weight: var(--fw-bold);
 }
-.rest-row__running {
+.rest-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.rest-adj {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
-  font-weight: var(--fw-normal);
-  color: var(--text-secondary);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-accent-border);
+  transition: background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.rest-adj:hover {
+  background: var(--color-accent-soft);
+}
+.rest-adj:active {
+  transform: scale(0.94);
 }
 .rest-row__idle {
   color: var(--text-dulled);

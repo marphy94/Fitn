@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Settings,
   Check,
@@ -9,10 +10,12 @@ import {
   X,
   Clock,
   AlertCircle,
+  Trash2,
 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { activeSession } from '../data/mock'
+import { uid } from '../store/store'
 import haptics from '../lib/haptics'
 import './Workout.css'
 
@@ -32,11 +35,33 @@ function CheckToggle({ done, onToggle }) {
   )
 }
 
-function SetRow({ setNo, block, active, done, value, onChange, onToggle }) {
+// Swipe a row right-to-left to reveal and trigger deletion.
+function SwipeRow({ onDelete, children }) {
+  return (
+    <div className="swipe">
+      <div className="swipe__action" aria-hidden="true">
+        <Trash2 size={18} strokeWidth={2} />
+      </div>
+      <motion.div
+        className="swipe__content"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={{ left: 0.7, right: 0 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -90) onDelete()
+        }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  )
+}
+
+function SetRow({ setNo, block, active, done, onChange, onToggle }) {
   const [error, setError] = useState(false)
 
-  const kg = value.kg
-  const reps = value.reps
+  const kg = block.kg
+  const reps = block.reps
   const kgEmpty = kg.trim() === ''
   const repsEmpty = reps.trim() === ''
 
@@ -79,7 +104,7 @@ function SetRow({ setNo, block, active, done, value, onChange, onToggle }) {
             inputMode="numeric"
             value={kg}
             onChange={(e) => {
-              onChange({ ...value, kg: e.target.value })
+              onChange({ kg: e.target.value })
               clearError()
             }}
             aria-label="Weight in kilograms"
@@ -91,7 +116,7 @@ function SetRow({ setNo, block, active, done, value, onChange, onToggle }) {
             inputMode="numeric"
             value={reps}
             onChange={(e) => {
-              onChange({ ...value, reps: e.target.value })
+              onChange({ reps: e.target.value })
               clearError()
             }}
             aria-label="Repetitions"
@@ -112,22 +137,27 @@ function SetRow({ setNo, block, active, done, value, onChange, onToggle }) {
   )
 }
 
-function RestRow({ seconds, active, remaining, onSkip }) {
+function RestRow({ seconds, active, remaining, onAdjust, onSkip }) {
   return (
     <div className={'rest-row' + (active ? ' rest-row--active' : '')}>
       <div className="rest-row__info">
         <span className="rest-row__k">
           <Timer size={12} strokeWidth={2.5} /> Rest
         </span>
-        <span className="rest-row__v">
-          {active ? fmt(remaining) : fmt(seconds)}
-          {active && <span className="rest-row__running"> · resting…</span>}
-        </span>
+        <span className="rest-row__v">{active ? fmt(remaining) : fmt(seconds)}</span>
       </div>
       {active ? (
-        <button className="rest-row__skip" aria-label="Skip rest" onClick={onSkip}>
-          <X size={16} strokeWidth={2.5} />
-        </button>
+        <div className="rest-row__actions">
+          <button className="rest-adj" onClick={() => onAdjust(-30)}>
+            −30s
+          </button>
+          <button className="rest-adj" onClick={() => onAdjust(30)}>
+            +30s
+          </button>
+          <button className="rest-row__skip" aria-label="Skip rest" onClick={onSkip}>
+            <X size={16} strokeWidth={2.5} />
+          </button>
+        </div>
       ) : (
         <span className="rest-row__idle">
           <Timer size={15} strokeWidth={2} />
@@ -137,48 +167,42 @@ function RestRow({ seconds, active, remaining, onSkip }) {
   )
 }
 
+// Build the mutable session model from the (static) plan data.
+const initExercises = () =>
+  activeSession.exercises.map((ex) => ({
+    id: ex.id,
+    name: ex.name,
+    best: ex.best,
+    rest: ex.rest,
+    sets: ex.sets.map((s) => ({
+      id: uid(),
+      last: s.last,
+      kg: s.kg ? String(s.kg) : '',
+      reps: s.reps ? String(s.reps) : '',
+      done: false,
+    })),
+  }))
+
 export default function Workout() {
   const navigate = useNavigate()
   const session = activeSession
-  const exercises = session.exercises
 
+  const [exercises, setExercises] = useState(initExercises)
   const [openIndex, setOpenIndex] = useState(0)
-  const [checked, setChecked] = useState(() =>
-    exercises.map((ex) => ex.sets.map(() => false))
-  )
-  // Set entries (kg / reps) live here so they survive collapsing an exercise.
-  const [entries, setEntries] = useState(() =>
-    exercises.map((ex) =>
-      ex.sets.map((s) => ({
-        kg: s.kg ? String(s.kg) : '',
-        reps: s.reps ? String(s.reps) : '',
-      }))
-    )
-  )
-
-  const setEntry = (exIndex, setIndex, val) =>
-    setEntries((prev) =>
-      prev.map((arr, e) =>
-        e === exIndex ? arr.map((v, s) => (s === setIndex ? val : v)) : arr
-      )
-    )
-  // Currently running rest: { ex, set, remaining } | null
+  // Running rest: { setId, remaining } | null
   const [rest, setRest] = useState(null)
   const restTimer = useRef(null)
-
-  // Elapsed workout time, counting up from when the session opens.
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => () => clearInterval(restTimer.current), [])
-
   useEffect(() => {
     const id = setInterval(() => setElapsed((e) => e + 1), 1000)
     return () => clearInterval(id)
   }, [])
 
-  const startRest = (exIndex, setIndex, seconds) => {
+  const startRest = (setId, seconds) => {
     clearInterval(restTimer.current)
-    setRest({ ex: exIndex, set: setIndex, remaining: seconds })
+    setRest({ setId, remaining: seconds })
     restTimer.current = setInterval(() => {
       setRest((prev) => {
         if (!prev) {
@@ -201,15 +225,31 @@ export default function Workout() {
     setRest(null)
   }
 
-  const toggleSet = (exIndex, setIndex) => {
-    const wasChecked = checked[exIndex][setIndex]
-    const newRow = checked[exIndex].map((v, s) => (s === setIndex ? !v : v))
-    setChecked((prev) => prev.map((arr, e) => (e === exIndex ? newRow : arr)))
+  const adjustRest = (delta) => {
+    haptics.light()
+    setRest((prev) =>
+      prev ? { ...prev, remaining: Math.max(1, prev.remaining + delta) } : prev
+    )
+  }
 
-    if (!wasChecked) {
+  const updateSet = (exIndex, setIndex, patch) =>
+    setExercises((prev) =>
+      prev.map((ex, e) =>
+        e === exIndex
+          ? { ...ex, sets: ex.sets.map((s, i) => (i === setIndex ? { ...s, ...patch } : s)) }
+          : ex
+      )
+    )
+
+  const toggleSet = (exIndex, setIndex) => {
+    const ex = exercises[exIndex]
+    const setObj = ex.sets[setIndex]
+    const wasDone = setObj.done
+    updateSet(exIndex, setIndex, { done: !wasDone })
+
+    if (!wasDone) {
       haptics.success()
-      const ex = exercises[exIndex]
-      const nowComplete = newRow.every(Boolean)
+      const nowComplete = ex.sets.every((s, i) => (i === setIndex ? true : s.done))
       if (nowComplete) {
         // Exercise finished → collapse it and open the next one below.
         clearInterval(restTimer.current)
@@ -217,15 +257,47 @@ export default function Workout() {
         setTimeout(() => {
           setOpenIndex(exIndex + 1 < exercises.length ? exIndex + 1 : -1)
         }, 550)
-      } else if (setIndex < ex.sets.length - 1) {
-        // Otherwise automatically run the rest after this set.
-        startRest(exIndex, setIndex, ex.rest)
+      } else {
+        // Otherwise automatically run this set's rest.
+        startRest(setObj.id, ex.rest)
       }
     } else {
       haptics.light()
-      // Un-checking the set cancels its running rest.
-      if (rest && rest.ex === exIndex && rest.set === setIndex) skipRest()
+      if (rest && rest.setId === setObj.id) skipRest()
     }
+  }
+
+  const addSet = (exIndex) => {
+    haptics.medium()
+    setExercises((prev) =>
+      prev.map((ex, e) =>
+        e === exIndex
+          ? {
+              ...ex,
+              sets: [
+                ...ex.sets,
+                { id: uid(), last: '—', kg: '', reps: '', done: false },
+              ],
+            }
+          : ex
+      )
+    )
+  }
+
+  const removeSet = (exIndex, setIndex) => {
+    const ex = exercises[exIndex]
+    if (ex.sets.length <= 1) {
+      haptics.warning()
+      return
+    }
+    const setObj = ex.sets[setIndex]
+    if (rest && rest.setId === setObj.id) skipRest()
+    haptics.warning()
+    setExercises((prev) =>
+      prev.map((x, e) =>
+        e === exIndex ? { ...x, sets: x.sets.filter((_, i) => i !== setIndex) } : x
+      )
+    )
   }
 
   const openExercise = (index) => {
@@ -233,19 +305,19 @@ export default function Workout() {
     setOpenIndex((cur) => (cur === index ? -1 : index))
   }
 
-  const doneCount = (exIndex) => checked[exIndex].filter(Boolean).length
-  const isComplete = (exIndex) => doneCount(exIndex) === exercises[exIndex].sets.length
-  const completedExercises = exercises.filter((_, i) => isComplete(i)).length
+  const doneCount = (ex) => ex.sets.filter((s) => s.done).length
+  const isComplete = (ex) => ex.sets.length > 0 && ex.sets.every((s) => s.done)
+  const completedExercises = exercises.filter(isComplete).length
 
   return (
     <div className="workout">
       {/* Progress header */}
       <header className="workout__top">
         <div className="workout__progress">
-          {exercises.map((ex, i) => (
+          {exercises.map((ex) => (
             <span
               key={ex.id}
-              className={'seg' + (isComplete(i) ? ' seg--full' : '')}
+              className={'seg' + (isComplete(ex) ? ' seg--full' : '')}
             />
           ))}
         </div>
@@ -275,9 +347,9 @@ export default function Workout() {
         <div className="stack">
           {exercises.map((ex, exIndex) => {
             const open = openIndex === exIndex
-            const done = doneCount(exIndex)
-            const complete = isComplete(exIndex)
-            const activeSetIndex = checked[exIndex].findIndex((v) => !v)
+            const done = doneCount(ex)
+            const complete = isComplete(ex)
+            const activeSetIndex = ex.sets.findIndex((s) => !s.done)
 
             return (
               <Card
@@ -309,31 +381,37 @@ export default function Workout() {
 
                 {open && (
                   <div className="ex-item__body">
-                    {ex.sets.map((block, setIndex) => (
-                      <div key={setIndex}>
-                        <SetRow
-                          setNo={setIndex + 1}
-                          block={block}
-                          active={setIndex === activeSetIndex}
-                          done={checked[exIndex][setIndex]}
-                          value={entries[exIndex][setIndex]}
-                          onChange={(val) => setEntry(exIndex, setIndex, val)}
-                          onToggle={() => toggleSet(exIndex, setIndex)}
-                        />
-                        {setIndex < ex.sets.length - 1 && (
+                    <AnimatePresence initial={false}>
+                      {ex.sets.map((block, setIndex) => (
+                        <motion.div
+                          key={block.id}
+                          className="set-unit"
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0, x: -60 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <SwipeRow onDelete={() => removeSet(exIndex, setIndex)}>
+                            <SetRow
+                              setNo={setIndex + 1}
+                              block={block}
+                              active={setIndex === activeSetIndex}
+                              done={block.done}
+                              onChange={(patch) => updateSet(exIndex, setIndex, patch)}
+                              onToggle={() => toggleSet(exIndex, setIndex)}
+                            />
+                          </SwipeRow>
                           <RestRow
                             seconds={ex.rest}
-                            active={
-                              rest &&
-                              rest.ex === exIndex &&
-                              rest.set === setIndex
-                            }
+                            active={rest && rest.setId === block.id}
                             remaining={rest ? rest.remaining : 0}
+                            onAdjust={adjustRest}
                             onSkip={skipRest}
                           />
-                        )}
-                      </div>
-                    ))}
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
 
                     <Button
                       variant="outline"
@@ -341,6 +419,7 @@ export default function Workout() {
                       full
                       icon={Plus}
                       className="ex-item__addset"
+                      onClick={() => addSet(exIndex)}
                     >
                       Set
                     </Button>
