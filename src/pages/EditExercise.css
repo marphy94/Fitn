@@ -34,6 +34,20 @@
   background: #26232f;
 }
 
+.input--rest {
+  width: 120px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  font-weight: var(--fw-bold);
+}
+
+.field__hint {
+  display: block;
+  font-size: 12px;
+  margin-top: var(--space-2);
+}
+
 .chip-grid {
   display: flex;
   flex-wrap: wrap;

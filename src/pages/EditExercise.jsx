@@ -9,6 +9,24 @@ import { useStore, useExercise, uid } from '../store/store'
 import haptics from '../lib/haptics'
 import './EditExercise.css'
 
+/* --- mm:ss helpers for the rest-time field --- */
+const toMMSS = (sec) => {
+  const s = Math.max(0, Math.floor(sec || 0))
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}
+const parseMMSS = (str) => {
+  const digits = String(str).replace(/\D/g, '').slice(-4).padStart(4, '0')
+  const m = parseInt(digits.slice(0, 2), 10)
+  const s = parseInt(digits.slice(2), 10)
+  return m * 60 + Math.min(s, 59)
+}
+// Progressive mm:ss masking while typing (colon auto-inserted from the right).
+const maskMMSS = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 4)
+  if (digits.length <= 2) return digits
+  return digits.slice(0, digits.length - 2) + ':' + digits.slice(digits.length - 2)
+}
+
 export default function EditExercise() {
   const navigate = useNavigate()
   const { exerciseId } = useParams()
@@ -18,6 +36,7 @@ export default function EditExercise() {
 
   const [name, setName] = useState(editing?.name ?? '')
   const [selected, setSelected] = useState(new Set(editing?.groups ?? []))
+  const [rest, setRest] = useState(toMMSS(editing?.rest ?? 90))
 
   const toggle = (group) => {
     setSelected((prev) => {
@@ -40,6 +59,7 @@ export default function EditExercise() {
         id: isNew ? uid() : exerciseId,
         name: name.trim(),
         groups: [...selected],
+        rest: parseMMSS(rest),
       },
     })
     haptics.success()
@@ -85,6 +105,24 @@ export default function EditExercise() {
             placeholder="e.g. Bulgarian Split Squat"
             onChange={(e) => setName(e.target.value)}
           />
+        </div>
+
+        <div className="field">
+          <label className="field__label" htmlFor="ex-rest">
+            Rest
+          </label>
+          <input
+            id="ex-rest"
+            className="input input--rest"
+            value={rest}
+            inputMode="numeric"
+            placeholder="mm:ss"
+            onChange={(e) => setRest(maskMMSS(e.target.value))}
+            onBlur={() => setRest(toMMSS(parseMMSS(rest)))}
+          />
+          <span className="field__hint text-dulled">
+            Rest between sets · format mm:ss
+          </span>
         </div>
 
         <div className="field">

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, Dumbbell } from 'lucide-react'
+import { Plus, Pencil, Trash2, Dumbbell, ArrowLeft } from 'lucide-react'
 import Screen from '../components/Screen'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -20,7 +20,14 @@ export default function CreateExercises() {
   return (
     <>
       <header className="topbar">
-        <h1 className="topbar__title">Exercises</h1>
+        <Button
+          variant="outline"
+          size="pill"
+          icon={ArrowLeft}
+          onClick={() => navigate('/plans')}
+        >
+          Back
+        </Button>
         <Button
           variant="primary"
           size="pill"
@@ -33,6 +40,8 @@ export default function CreateExercises() {
       </header>
 
       <Screen hasTabBar>
+        <h1 className="large-title editor-title">Exercises</h1>
+
         {exercises.length === 0 ? (
           <div className="empty">
             <div className="empty__icon">

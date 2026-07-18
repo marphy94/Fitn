@@ -42,7 +42,36 @@ export default function FitnessPlans() {
       </header>
 
       <Screen hasTabBar>
-        <span className="section-label">Your workouts</span>
+        {/* Exercise library — kept at the top for quick access */}
+        <Card
+          className="plan-card lib-card"
+          interactive
+          onClick={() => {
+            haptics.light()
+            navigate('/exercises')
+          }}
+        >
+          <div className="plan-card__body">
+            <div className="row gap-3">
+              <div className="lib-icon">
+                <ListChecks size={18} strokeWidth={2.25} />
+              </div>
+              <div>
+                <p className="plan-card__name" style={{ fontSize: 18 }}>
+                  Exercises
+                </p>
+                <p className="plan-card__meta text-secondary">
+                  Create &amp; edit movements
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={20} className="text-dulled" strokeWidth={2} />
+          </div>
+        </Card>
+
+        <span className="section-label" style={{ marginTop: 'var(--space-5)' }}>
+          Your workouts
+        </span>
         <div className="stack">
           {plans.map((plan) => (
             <Card key={plan.id} className="plan-card">
@@ -92,35 +121,6 @@ export default function FitnessPlans() {
             </Card>
           ))}
         </div>
-
-        <span className="section-label" style={{ marginTop: 'var(--space-5)' }}>
-          Library
-        </span>
-        <Card
-          className="plan-card"
-          interactive
-          onClick={() => {
-            haptics.light()
-            navigate('/exercises')
-          }}
-        >
-          <div className="plan-card__body">
-            <div className="row gap-3">
-              <div className="lib-icon">
-                <ListChecks size={18} strokeWidth={2.25} />
-              </div>
-              <div>
-                <p className="plan-card__name" style={{ fontSize: 18 }}>
-                  Exercises
-                </p>
-                <p className="plan-card__meta text-secondary">
-                  Create &amp; edit movements
-                </p>
-              </div>
-            </div>
-            <ChevronRight size={20} className="text-dulled" strokeWidth={2} />
-          </div>
-        </Card>
       </Screen>
     </>
   )

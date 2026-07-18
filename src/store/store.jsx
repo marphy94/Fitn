@@ -16,7 +16,7 @@ export const uid = () =>
 
 function seed() {
   return {
-    exercises: seedExercises.map((e) => ({ ...e })),
+    exercises: seedExercises.map((e) => ({ rest: 90, ...e })),
     plans: seedPlans.map((p) => ({
       ...p,
       items: p.items.map((i) => ({ ...i })),
@@ -40,11 +40,13 @@ function reducer(state, action) {
   switch (action.type) {
     /* ---- Exercises ---- */
     case 'exercise/save': {
-      const { id, name, groups } = action.payload
+      const { id, name, groups, rest } = action.payload
       const exists = state.exercises.some((e) => e.id === id)
       const exercises = exists
-        ? state.exercises.map((e) => (e.id === id ? { ...e, name, groups } : e))
-        : [...state.exercises, { id, name, groups }]
+        ? state.exercises.map((e) =>
+            e.id === id ? { ...e, name, groups, rest } : e
+          )
+        : [...state.exercises, { id, name, groups, rest }]
       return { ...state, exercises }
     }
     case 'exercise/delete':

@@ -18,12 +18,13 @@ export const MUSCLE_GROUPS = [
   'Stabilisation',
 ]
 
+// `rest` is the rest time (in seconds) between sets of this exercise.
 export const exercises = [
-  { id: 'sumo-squat', name: 'Sumo Squat', groups: ['Glutes', 'Quads', 'Adductors'] },
-  { id: 'romanian-dl', name: 'Romanian DL', groups: ['Hamstrings', 'Glutes', 'Lower Back'] },
-  { id: 'hip-thrust', name: 'Hip Thrust', groups: ['Glutes', 'Hamstrings', 'Core'] },
-  { id: 'goblet-squat', name: 'Goblet Squat', groups: ['Quads', 'Glutes', 'Adductors', 'Core'] },
-  { id: 'lunges', name: 'Lunges', groups: ['Quads', 'Glutes', 'Stabilisation'] },
+  { id: 'sumo-squat', name: 'Sumo Squat', groups: ['Glutes', 'Quads', 'Adductors'], rest: 90 },
+  { id: 'romanian-dl', name: 'Romanian DL', groups: ['Hamstrings', 'Glutes', 'Lower Back'], rest: 120 },
+  { id: 'hip-thrust', name: 'Hip Thrust', groups: ['Glutes', 'Hamstrings', 'Core'], rest: 90 },
+  { id: 'goblet-squat', name: 'Goblet Squat', groups: ['Quads', 'Glutes', 'Adductors', 'Core'], rest: 60 },
+  { id: 'lunges', name: 'Lunges', groups: ['Quads', 'Glutes', 'Stabilisation'], rest: 60 },
 ]
 
 export const plans = [
