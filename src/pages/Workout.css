@@ -26,14 +26,10 @@
   height: 4px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+  transition: background var(--dur-base) var(--ease-out);
 }
-.seg__fill {
-  display: block;
-  height: 100%;
-  border-radius: var(--radius-pill);
+.seg--full {
   background: var(--color-accent);
-  transition: width var(--dur-base) var(--ease-out);
 }
 .workout__topmeta {
   display: flex;
@@ -50,10 +46,32 @@
   padding-bottom: calc(var(--safe-bottom) + 96px);
 }
 
+.workout__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0 2px var(--space-3);
+}
 .workout__plan {
   font-size: 13px;
   font-weight: var(--fw-bold);
-  margin: 0 2px var(--space-3);
+}
+.workout__timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+.workout__timer svg {
+  color: var(--color-accent);
 }
 
 /* ---- Accordion exercise item ---- */

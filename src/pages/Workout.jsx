@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings, Check, Plus, Timer, ChevronDown, X } from 'lucide-react'
+import { Settings, Check, Plus, Timer, ChevronDown, X, Clock } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { activeSession } from '../data/mock'
@@ -103,7 +103,15 @@ export default function Workout() {
   const [rest, setRest] = useState(null)
   const restTimer = useRef(null)
 
+  // Elapsed workout time, counting up from when the session opens.
+  const [elapsed, setElapsed] = useState(0)
+
   useEffect(() => () => clearInterval(restTimer.current), [])
+
+  useEffect(() => {
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const startRest = (exIndex, setIndex, seconds) => {
     clearInterval(restTimer.current)
@@ -167,17 +175,12 @@ export default function Workout() {
       {/* Progress header */}
       <header className="workout__top">
         <div className="workout__progress">
-          {exercises.map((ex, i) => {
-            const frac = doneCount(i) / ex.sets.length
-            return (
-              <span key={ex.id} className="seg">
-                <span
-                  className="seg__fill"
-                  style={{ width: `${Math.round(frac * 100)}%` }}
-                />
-              </span>
-            )
-          })}
+          {exercises.map((ex, i) => (
+            <span
+              key={ex.id}
+              className={'seg' + (isComplete(i) ? ' seg--full' : '')}
+            />
+          ))}
         </div>
         <div className="workout__topmeta">
           <span className="workout__count text-dulled">
@@ -194,7 +197,13 @@ export default function Workout() {
       </header>
 
       <div className="screen screen--padded workout__scroll">
-        <p className="workout__plan text-secondary">{session.planName}</p>
+        <div className="workout__head">
+          <p className="workout__plan text-secondary">{session.planName}</p>
+          <div className="workout__timer" aria-label="Elapsed workout time">
+            <Clock size={14} strokeWidth={2.25} />
+            <span>{fmt(elapsed)}</span>
+          </div>
+        </div>
 
         <div className="stack">
           {exercises.map((ex, exIndex) => {
