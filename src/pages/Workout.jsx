@@ -1,41 +1,38 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings, Check, Plus, Timer } from 'lucide-react'
+import { Settings, Check, Plus, Timer, ChevronDown, X } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { activeSession } from '../data/mock'
 import haptics from '../lib/haptics'
 import './Workout.css'
 
-function CheckToggle({ done, onToggle, tone = 'accent' }) {
+const fmt = (s) =>
+  `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+
+function CheckToggle({ done, onToggle }) {
   return (
     <button
-      className={
-        'check-toggle' +
-        (done ? ` is-done check-toggle--${tone}` : '')
-      }
+      className={'check-toggle' + (done ? ' is-done check-toggle--positive' : '')}
       aria-pressed={done}
       aria-label={done ? 'Mark set incomplete' : 'Mark set complete'}
-      onClick={() => {
-        done ? haptics.light() : haptics.success()
-        onToggle()
-      }}
+      onClick={onToggle}
     >
       <Check size={16} strokeWidth={3} />
     </button>
   )
 }
 
-function SetRow({ block, active, done, onToggle }) {
+function SetRow({ setNo, block, active, done, onToggle }) {
   const [kg, setKg] = useState(block.kg ? String(block.kg) : '')
   const [reps, setReps] = useState(block.reps ? String(block.reps) : '')
 
   return (
-    <Card className={'set-row' + (active ? ' set-row--active' : '')}>
+    <div className={'set-row' + (active ? ' set-row--active' : '')}>
       <div className="set-row__meta">
         <div className="set-row__index">
           <span className="set-row__k">Set</span>
-          <span className="set-row__v">{block.index}</span>
+          <span className="set-row__v">{setNo}</span>
         </div>
         <div className="set-row__last">
           <span className="set-row__k">Last</span>
@@ -63,67 +60,128 @@ function SetRow({ block, active, done, onToggle }) {
         <span className="set-row__unit">reps</span>
       </div>
 
-      <CheckToggle done={done} tone="positive" onToggle={onToggle} />
-    </Card>
+      <CheckToggle done={done} onToggle={onToggle} />
+    </div>
   )
 }
 
-function RestRow({ block, done, onToggle, onOpen }) {
+function RestRow({ seconds, active, remaining, onSkip }) {
   return (
-    <Card className="rest-row">
-      <button
-        className="rest-row__info"
-        onClick={() => {
-          haptics.light()
-          onOpen()
-        }}
-        aria-label={`Open rest timer, ${block.label}`}
-      >
+    <div className={'rest-row' + (active ? ' rest-row--active' : '')}>
+      <div className="rest-row__info">
         <span className="rest-row__k">
-          <Timer size={12} strokeWidth={2.5} /> Time
+          <Timer size={12} strokeWidth={2.5} /> Rest
         </span>
-        <span className="rest-row__v">{block.label}</span>
-      </button>
-      <CheckToggle done={done} onToggle={onToggle} />
-    </Card>
+        <span className="rest-row__v">
+          {active ? fmt(remaining) : fmt(seconds)}
+          {active && <span className="rest-row__running"> · resting…</span>}
+        </span>
+      </div>
+      {active ? (
+        <button className="rest-row__skip" aria-label="Skip rest" onClick={onSkip}>
+          <X size={16} strokeWidth={2.5} />
+        </button>
+      ) : (
+        <span className="rest-row__idle">
+          <Timer size={15} strokeWidth={2} />
+        </span>
+      )}
+    </div>
   )
 }
 
 export default function Workout() {
   const navigate = useNavigate()
-  const s = activeSession
-  const c = s.current
+  const session = activeSession
+  const exercises = session.exercises
 
+  const [openIndex, setOpenIndex] = useState(0)
   const [checked, setChecked] = useState(() =>
-    c.blocks.map((b) => !!b.done)
+    exercises.map((ex) => ex.sets.map(() => false))
   )
+  // Currently running rest: { ex, set, remaining } | null
+  const [rest, setRest] = useState(null)
+  const restTimer = useRef(null)
 
-  const toggle = (i) =>
-    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
+  useEffect(() => () => clearInterval(restTimer.current), [])
 
-  const activeSetIndex = c.blocks.findIndex(
-    (b, i) => b.kind === 'set' && !checked[i]
-  )
+  const startRest = (exIndex, setIndex, seconds) => {
+    clearInterval(restTimer.current)
+    setRest({ ex: exIndex, set: setIndex, remaining: seconds })
+    restTimer.current = setInterval(() => {
+      setRest((prev) => {
+        if (!prev) {
+          clearInterval(restTimer.current)
+          return null
+        }
+        if (prev.remaining <= 1) {
+          clearInterval(restTimer.current)
+          haptics.success()
+          return null
+        }
+        return { ...prev, remaining: prev.remaining - 1 }
+      })
+    }, 1000)
+  }
+
+  const skipRest = () => {
+    clearInterval(restTimer.current)
+    haptics.light()
+    setRest(null)
+  }
+
+  const toggleSet = (exIndex, setIndex) => {
+    const wasChecked = checked[exIndex][setIndex]
+    setChecked((prev) =>
+      prev.map((arr, e) =>
+        e === exIndex
+          ? arr.map((v, s) => (s === setIndex ? !v : v))
+          : arr
+      )
+    )
+    if (!wasChecked) {
+      // Just checked a set off → automatically run the following rest.
+      haptics.success()
+      const ex = exercises[exIndex]
+      if (setIndex < ex.sets.length - 1) {
+        startRest(exIndex, setIndex, ex.rest)
+      }
+    } else {
+      haptics.light()
+      // Un-checking the set cancels its running rest.
+      if (rest && rest.ex === exIndex && rest.set === setIndex) skipRest()
+    }
+  }
+
+  const openExercise = (index) => {
+    haptics.selection()
+    setOpenIndex((cur) => (cur === index ? -1 : index))
+  }
+
+  const doneCount = (exIndex) => checked[exIndex].filter(Boolean).length
+  const isComplete = (exIndex) => doneCount(exIndex) === exercises[exIndex].sets.length
+  const completedExercises = exercises.filter((_, i) => isComplete(i)).length
 
   return (
     <div className="workout">
       {/* Progress header */}
       <header className="workout__top">
         <div className="workout__progress">
-          {Array.from({ length: s.exerciseTotal }).map((_, i) => (
-            <span
-              key={i}
-              className={
-                'seg' +
-                (i < s.exerciseIndex ? ' seg--full' : '') +
-                (i === s.exerciseIndex ? ' seg--current' : '')
-              }
-            />
-          ))}
+          {exercises.map((ex, i) => {
+            const frac = doneCount(i) / ex.sets.length
+            return (
+              <span key={ex.id} className="seg">
+                <span
+                  className="seg__fill"
+                  style={{ width: `${Math.round(frac * 100)}%` }}
+                />
+              </span>
+            )
+          })}
         </div>
         <div className="workout__topmeta">
           <span className="workout__count text-dulled">
-            {s.exerciseIndex}/{s.exerciseTotal}
+            {completedExercises}/{exercises.length}
           </span>
           <button
             className="icon-btn"
@@ -136,57 +194,83 @@ export default function Workout() {
       </header>
 
       <div className="screen screen--padded workout__scroll">
-        {/* Current exercise heading */}
-        <div className="workout__heading">
-          <h1 className="large-title">{c.name}</h1>
-          <p className="workout__set text-accent">
-            Set {c.setIndex}/{c.setTotal}
-          </p>
-          <p className="workout__best text-secondary">Best: {c.best}</p>
-        </div>
+        <p className="workout__plan text-secondary">{session.planName}</p>
 
-        {/* Set / rest blocks */}
-        <div className="stack-2">
-          {c.blocks.map((block, i) =>
-            block.kind === 'set' ? (
-              <SetRow
-                key={i}
-                block={block}
-                active={i === activeSetIndex}
-                done={checked[i]}
-                onToggle={() => toggle(i)}
-              />
-            ) : (
-              <RestRow
-                key={i}
-                block={block}
-                done={checked[i]}
-                onToggle={() => toggle(i)}
-                onOpen={() => navigate('/rest')}
-              />
-            )
-          )}
-        </div>
-
-        <Button
-          variant="outline"
-          size="lg"
-          full
-          icon={Plus}
-          className="workout__addset"
-        >
-          Set
-        </Button>
-
-        {/* Up next */}
         <div className="stack">
-          {s.upNext.map((ex) => (
-            <Card key={ex.name} className="upnext">
-              <p className="upnext__name">{ex.name}</p>
-              <p className="upnext__meta text-accent">Set {ex.progress}</p>
-              <p className="upnext__best text-secondary">Best: {ex.best}</p>
-            </Card>
-          ))}
+          {exercises.map((ex, exIndex) => {
+            const open = openIndex === exIndex
+            const done = doneCount(exIndex)
+            const complete = isComplete(exIndex)
+            const activeSetIndex = checked[exIndex].findIndex((v) => !v)
+
+            return (
+              <Card
+                key={ex.id}
+                className={'ex-item' + (complete ? ' ex-item--complete' : '')}
+              >
+                <button
+                  className="ex-item__head"
+                  onClick={() => openExercise(exIndex)}
+                  aria-expanded={open}
+                >
+                  <div className="ex-item__title">
+                    <p className="ex-item__name">{ex.name}</p>
+                    <p className="ex-item__meta">
+                      <span className="text-accent">
+                        Set {done}/{ex.sets.length}
+                      </span>
+                      <span className="ex-item__best text-secondary">
+                        Best: {ex.best}
+                      </span>
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={'ex-item__chev' + (open ? ' is-open' : '')}
+                    size={20}
+                    strokeWidth={2.25}
+                  />
+                </button>
+
+                {open && (
+                  <div className="ex-item__body">
+                    {ex.sets.map((block, setIndex) => (
+                      <div key={setIndex}>
+                        <SetRow
+                          setNo={setIndex + 1}
+                          block={block}
+                          active={setIndex === activeSetIndex}
+                          done={checked[exIndex][setIndex]}
+                          onToggle={() => toggleSet(exIndex, setIndex)}
+                        />
+                        {setIndex < ex.sets.length - 1 && (
+                          <RestRow
+                            seconds={ex.rest}
+                            active={
+                              rest &&
+                              rest.ex === exIndex &&
+                              rest.set === setIndex
+                            }
+                            remaining={rest ? rest.remaining : 0}
+                            onSkip={skipRest}
+                          />
+                        )}
+                      </div>
+                    ))}
+
+                    <Button
+                      variant="outline"
+                      size="md"
+                      full
+                      icon={Plus}
+                      className="ex-item__addset"
+                    >
+                      Set
+                    </Button>
+                  </div>
+                )}
+              </Card>
+            )
+          })}
         </div>
       </div>
 

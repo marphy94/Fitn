@@ -60,25 +60,43 @@ export const lastWorkout = {
 }
 
 // Active workout session shown on the Workout screen.
+// Each exercise carries its own sets and a `rest` time (seconds) that runs
+// automatically after a set is checked off.
+const set = (last) => ({ last, kg: 0, reps: 0 })
 export const activeSession = {
   planName: 'Leg Day',
-  exerciseIndex: 1,
-  exerciseTotal: 4,
-  current: {
-    name: 'Sumo Squads',
-    setIndex: 2,
-    setTotal: 3,
-    best: '60 kg x 10 reps',
-    blocks: [
-      { kind: 'set', index: 1, last: '60 kg x 10 reps', kg: 60, reps: 10, done: true },
-      { kind: 'rest', label: '03:00 Minuten', done: false },
-      { kind: 'set', index: 2, last: '60 kg x 10 reps', kg: 0, reps: 0, done: false },
-      { kind: 'rest', label: '03:00 Minuten', done: false },
-      { kind: 'set', index: 3, last: '60 kg x 10 reps', kg: 0, reps: 0, done: false },
-    ],
-  },
-  upNext: [
-    { name: 'Lunges', progress: '0/3', best: '60 kg x 10 reps' },
-    { name: 'Romanian DL', progress: '0/3', best: '60 kg x 10 reps' },
+  exercises: [
+    {
+      id: 'sumo',
+      name: 'Sumo Squat',
+      best: '60 kg x 10 reps',
+      rest: 90,
+      sets: [
+        { last: '60 kg x 10 reps', kg: 60, reps: 10 },
+        set('60 kg x 10 reps'),
+        set('60 kg x 10 reps'),
+      ],
+    },
+    {
+      id: 'lunges',
+      name: 'Lunges',
+      best: '60 kg x 10 reps',
+      rest: 60,
+      sets: [set('60 kg x 10 reps'), set('60 kg x 10 reps'), set('60 kg x 10 reps')],
+    },
+    {
+      id: 'rdl',
+      name: 'Romanian DL',
+      best: '60 kg x 10 reps',
+      rest: 120,
+      sets: [set('60 kg x 10 reps'), set('60 kg x 10 reps'), set('60 kg x 10 reps')],
+    },
+    {
+      id: 'hip',
+      name: 'Hip Thrust',
+      best: '60 kg x 10 reps',
+      rest: 90,
+      sets: [set('60 kg x 10 reps'), set('60 kg x 10 reps'), set('60 kg x 10 reps')],
+    },
   ],
 }
