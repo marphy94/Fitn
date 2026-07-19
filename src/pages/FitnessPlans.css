@@ -17,23 +17,26 @@
   font-size: 13px;
   margin-top: 3px;
 }
-.plan-card__body--tap {
-  cursor: pointer;
+/* Workout card: text left, actions right — all on one row */
+.plan-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
 }
-.plan-card__foot {
+.plan-card__info {
+  min-width: 0;
+}
+.plan-card__actions {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3) var(--space-3);
-  border-top: 1px solid var(--color-border-faint);
-}
-.plan-card__foot-spacer {
-  flex: 1;
+  flex-shrink: 0;
 }
 .plan-card .del-btn {
   width: 32px;
   height: 32px;
-  margin-left: var(--space-1);
 }
 
 .lib-icon {

@@ -75,41 +75,40 @@ export default function FitnessPlans() {
         <div className="stack">
           {plans.map((plan) => (
             <Card key={plan.id} className="plan-card">
-              <div className="plan-card__body">
+              <div className="plan-card__row">
                 <div className="plan-card__info">
                   <p className="plan-card__name">{plan.name}</p>
                   <p className="plan-card__meta text-secondary">
                     {countExercises(plan)} exercises
                   </p>
                 </div>
-              </div>
-              <div className="plan-card__foot">
-                <button
-                  className="del-btn"
-                  aria-label={`Delete ${plan.name}`}
-                  onClick={(e) => removePlan(plan.id, e)}
-                >
-                  <Trash2 size={16} strokeWidth={2} />
-                </button>
-                <div className="plan-card__foot-spacer" />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  icon={Pencil}
-                  onClick={() => navigate(`/plans/${plan.id}/edit`)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  icon={Play}
-                  haptic="medium"
-                  onClick={() => navigate('/workout')}
-                  disabled={countExercises(plan) === 0}
-                >
-                  Start
-                </Button>
+                <div className="plan-card__actions">
+                  <button
+                    className="del-btn"
+                    aria-label={`Delete ${plan.name}`}
+                    onClick={(e) => removePlan(plan.id, e)}
+                  >
+                    <Trash2 size={16} strokeWidth={2} />
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    icon={Pencil}
+                    onClick={() => navigate(`/plans/${plan.id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    icon={Play}
+                    haptic="medium"
+                    onClick={() => navigate('/workout')}
+                    disabled={countExercises(plan) === 0}
+                  >
+                    Start
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}
