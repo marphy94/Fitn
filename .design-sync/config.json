@@ -1,0 +1,22 @@
+{
+  "projectId": "67b7c638-8339-479d-86ed-90b380b4f51f",
+  "shape": "package",
+  "pkg": "fitn",
+  "globalName": "Fitn",
+  "srcDir": "src",
+  "componentSrcMap": {
+    "Button": "src/components/ui/Button.jsx",
+    "Card": "src/components/ui/Card.jsx",
+    "Chip": "src/components/ui/Chip.jsx",
+    "MonthCalendar": "src/components/MonthCalendar.jsx"
+  },
+  "cssEntry": ".design-sync/webfonts.css",
+  "runtimeFontPrefixes": ["Lato", "Passion One"],
+  "readmeHeader": ".design-sync/conventions.md",
+  "dtsPropsFor": {
+    "Button": "variant?: 'primary' | 'outline' | 'ghost' | 'positive' | 'danger'; size?: 'sm' | 'md' | 'lg' | 'pill'; full?: boolean; icon?: React.ComponentType<{ size?: number; strokeWidth?: number }>; iconRight?: React.ComponentType<{ size?: number; strokeWidth?: number }>; haptic?: 'light' | 'medium' | 'heavy' | 'soft' | 'rigid' | 'selection' | 'success' | 'warning' | 'error'; disabled?: boolean; className?: string; style?: React.CSSProperties; onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void; children?: React.ReactNode;",
+    "Card": "as?: React.ElementType; glass?: boolean; interactive?: boolean; className?: string; style?: React.CSSProperties; onClick?: (e: React.MouseEvent) => void; children?: React.ReactNode;",
+    "Chip": "selected?: boolean; onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void; className?: string; children?: React.ReactNode;",
+    "MonthCalendar": "year?: number; month?: number; workoutDays?: number[];"
+  }
+}

@@ -1,0 +1,4 @@
+/* Brand webfonts (Lato + Passion One) — loaded at runtime from the font host.
+   The design environment resolves this remote @import; keep in sync with
+   index.html's font link. */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700;900&family=Passion+One:wght@400;700;900&display=swap');
