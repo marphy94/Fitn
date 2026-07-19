@@ -83,21 +83,6 @@ export default function FitnessPlans() {
                   </p>
                 </div>
                 <div className="plan-card__actions">
-                  <button
-                    className="del-btn"
-                    aria-label={`Delete ${plan.name}`}
-                    onClick={(e) => removePlan(plan.id, e)}
-                  >
-                    <Trash2 size={16} strokeWidth={2} />
-                  </button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    icon={Pencil}
-                    onClick={() => navigate(`/plans/${plan.id}/edit`)}
-                  >
-                    Edit
-                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -108,6 +93,21 @@ export default function FitnessPlans() {
                   >
                     Start
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    icon={Pencil}
+                    onClick={() => navigate(`/plans/${plan.id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                  <button
+                    className="del-btn"
+                    aria-label={`Delete ${plan.name}`}
+                    onClick={(e) => removePlan(plan.id, e)}
+                  >
+                    <Trash2 size={16} strokeWidth={2} />
+                  </button>
                 </div>
               </div>
             </Card>
