@@ -75,20 +75,13 @@ export default function FitnessPlans() {
         <div className="stack">
           {plans.map((plan) => (
             <Card key={plan.id} className="plan-card">
-              <div
-                className="plan-card__body plan-card__body--tap"
-                onClick={() => {
-                  haptics.light()
-                  navigate(`/plans/${plan.id}/edit`)
-                }}
-              >
+              <div className="plan-card__body">
                 <div className="plan-card__info">
                   <p className="plan-card__name">{plan.name}</p>
                   <p className="plan-card__meta text-secondary">
                     {countExercises(plan)} exercises
                   </p>
                 </div>
-                <ChevronRight size={20} className="text-dulled" strokeWidth={2} />
               </div>
               <div className="plan-card__foot">
                 <button

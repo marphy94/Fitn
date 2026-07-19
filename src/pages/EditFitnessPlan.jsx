@@ -1,7 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Reorder, useDragControls, AnimatePresence, motion } from 'framer-motion'
-import { Pencil, Trash2, GripVertical, Search, Timer, Plus, Check } from 'lucide-react'
+import {
+  Pencil,
+  Trash2,
+  GripVertical,
+  Search,
+  Timer,
+  Plus,
+  Check,
+  ArrowLeft,
+} from 'lucide-react'
 import Button from '../components/ui/Button'
 import { useStore, usePlan, uid } from '../store/store'
 import { useExercises } from '../store/store'
@@ -141,6 +150,14 @@ export default function EditFitnessPlan() {
   return (
     <div className="plan-editor">
       <header className="topbar plan-editor__topbar">
+        <Button
+          variant="outline"
+          size="pill"
+          icon={ArrowLeft}
+          onClick={() => navigate('/plans')}
+        >
+          Back
+        </Button>
         {renaming ? (
           <input
             className="plan-editor__rename"
@@ -163,9 +180,6 @@ export default function EditFitnessPlan() {
             <Pencil size={16} strokeWidth={2.25} className="text-accent" />
           </button>
         )}
-        <Button variant="ghost" size="sm" onClick={() => navigate('/plans')}>
-          Done
-        </Button>
       </header>
 
       <div className="screen screen--padded plan-editor__scroll">
