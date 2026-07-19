@@ -5,7 +5,8 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  padding-top: calc(var(--safe-top) + 54px);
+  /* Clear the fixed header (title + 40px pill buttons) with a 12px gap */
+  padding-top: calc(var(--safe-top) + 68px);
   padding-bottom: calc(var(--safe-bottom) + 28px);
 }
 

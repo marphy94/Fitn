@@ -88,7 +88,7 @@ export default function Statistics() {
 
         {/* Per-exercise trends */}
         <span className="section-label">Personal records</span>
-        <div className="stack-2">
+        <div className="stack">
           {trends.map((t) => {
             const up = t.delta >= 0
             return (

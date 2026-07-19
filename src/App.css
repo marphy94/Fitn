@@ -56,14 +56,14 @@
   transform: scale(0.9);
 }
 
-/* Section label above groups of cards */
+/* Section label above groups of cards — 12px gap down to the cards */
 .section-label {
   font-size: var(--fs-label);
   font-weight: var(--fw-medium);
   letter-spacing: 0.7px;
   text-transform: uppercase;
   color: var(--text-dulled);
-  margin: 0 4px 10px;
+  margin: 0 4px var(--space-3);
 }
 
 /* Empty state */
